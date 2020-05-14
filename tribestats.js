@@ -251,3 +251,4 @@ $.getAll(linksODA, (i, data) => {
             }
         }
     }
+})

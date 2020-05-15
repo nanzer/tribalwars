@@ -57,24 +57,18 @@ linksODS = [];
 linksODD = [];
 linksODA = [];
 linksLoot = [];
-linksScav = [];
-
 ODSperPlayer = [];
 ODDperPlayer = [];
 ODAperPlayer = [];
 lootperPlayer = [];
-scavperPlayer = [];
-
 for (var i = 0; i < names.length; i++) {
     linksODA.push("/game.php?screen=ranking&mode=in_a_day&type=kill_att&name=" + names[i]);
     linksODS.push("/game.php?screen=ranking&mode=in_a_day&type=kill_sup&name=" + names[i]);
     linksODD.push("/game.php?screen=ranking&mode=in_a_day&type=kill_def&name=" + names[i]);
     linksLoot.push("/game.php?screen=ranking&mode=in_a_day&type=loot_res&name=" + names[i]);
-    linksScav.push("/game.php?screen=ranking&mode=in_a_day&type=scavenge&name=" + names[i]);
 }
-$("#content_value table.vis tr").eq(2).append("<th onclick='sortTableTest(6)'>ODA</th><th onclick='sortTableTest(7)'>ODD</th><th onclick='sortTableTest(8)'>ODS</th><th onclick='sortTableTest(9)'>Loot</th><th>Scav</th>")
-//need to fix sorting for scav
-$("#content_value table.vis").eq(2).attr('id', 'tableMembers');
+$("#content_value table.vis tr").eq(2).append("<th onclick='sortTableTest(6)'>ODA</th><th onclick='sortTableTest(7)'>ODD</th><th onclick='sortTableTest(8)'>ODS</th><th onclick='sortTableTest(9)'>Loot</th>")
+$("#content_value table.vis").eq(2).attr('id','tableMembers');
 $("#contentContainer").eq(0).prepend(`
                 <div id="progressbar" style="width: 100%;
                 background-color: #36393f;"><div id="progress" style="width: 0%;
@@ -102,7 +96,7 @@ $.getAll(linksODA, (i, data) => {
     else {
         ODAperPlayer.push(["0", "Never"]);
     }
-
+    
 },
     () => {
         $("#progress").css("width", `${(linksODA.length) / linksODA.length * 100}%`);
@@ -156,38 +150,15 @@ $.getAll(linksODA, (i, data) => {
                                     $("#content_value table.vis tr").eq(o).append("<td title=" + lootperPlayer[o - 3][1] + ">" + lootperPlayer[o - 3][0] + "</th>")
                                 }
 
-                                //scav
-                                $.getAll(linksScav, (i, data) => {
-                                    if ($(data).find(".lit-item")[3] != undefined) {
-                                        temp = $(data).find(".lit-item")
-                                        scavperPlayer.push([temp[3].innerText, temp[4].innerText]);
-                                    }
-                                    else {
-                                        scavperPlayer.push(["0", "Never"]);
-                                    }
-
-                                },
-                                    () => {
-                                        for (var o = 3; o < scavperPlayer.length + 3; o++) {
-                                            $("#content_value table.vis tr").eq(o).append("<td title=" + scavperPlayer[o - 3][1] + ">" + scavperPlayer[o - 3][0] + "</th>")
-                                        }
-
-                                        $("#progress").remove();
-                                    },
-                                    (error) => {
-                                        console.error(error);
-                                    });
+                                $("#progress").remove();
                             },
                             (error) => {
                                 console.error(error);
                             });
-
                     },
                     (error) => {
                         console.error(error);
                     });
-
-
 
             },
             (error) => {
@@ -196,59 +167,65 @@ $.getAll(linksODA, (i, data) => {
 
 
 
+    },
+    (error) => {
+        console.error(error);
+    });
 
-        function sortTableTest(n) {
-            var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
-            table = document.getElementById("tableMembers");
-            switching = true;
-            // Set the sorting direction to ascending:
-            dir = "asc";
-            /* Make a loop that will continue until
-            no switching has been done: */
-            while (switching) {
-                // Start by saying: no switching is done:
-                switching = false;
-                rows = table.rows;
-                /* Loop through all table rows (except the
-                first, which contains table headers): */
-                for (i = 1; i < (rows.length - 1); i++) {
-                    // Start by saying there should be no switching:
-                    shouldSwitch = false;
-                    /* Get the two elements you want to compare,
-                    one from current row and one from the next: */
-                    x = rows[i].getElementsByTagName("td")[n];
-                    y = rows[i + 1].getElementsByTagName("td")[n];
-                    /* Check if the two rows should switch place,
-                    based on the direction, asc or desc: */
-                    if (dir == "asc") {
-                        if (Number(x.innerHTML.replace(/\./g, '')) > Number(y.innerHTML.replace(/\./g, ''))) {
-                            // If so, mark as a switch and break the loop:
-                            shouldSwitch = true;
-                            break;
-                        }
-                    } else if (dir == "desc") {
-                        if (Number(x.innerHTML.replace(/\./g, '')) < Number(y.innerHTML.replace(/\./g, ''))) {
-                            // If so, mark as a switch and break the loop:
-                            shouldSwitch = true;
-                            break;
-                        }
+
+
+
+    function sortTableTest(n) {
+        var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+        table = document.getElementById("tableMembers");
+        switching = true;
+        // Set the sorting direction to ascending:
+        dir = "asc";
+        /* Make a loop that will continue until
+        no switching has been done: */
+        while (switching) {
+            // Start by saying: no switching is done:
+            switching = false;
+            rows = table.rows;
+            /* Loop through all table rows (except the
+            first, which contains table headers): */
+            for (i = 1; i < (rows.length - 1); i++) {
+                // Start by saying there should be no switching:
+                shouldSwitch = false;
+                /* Get the two elements you want to compare,
+                one from current row and one from the next: */
+                x = rows[i].getElementsByTagName("td")[n];
+                y = rows[i + 1].getElementsByTagName("td")[n];
+                /* Check if the two rows should switch place,
+                based on the direction, asc or desc: */
+                if (dir == "asc") {
+                    if (Number(x.innerHTML.replace(/\./g,'')) > Number(y.innerHTML.replace(/\./g,''))) {
+                        // If so, mark as a switch and break the loop:
+                        shouldSwitch = true;
+                        break;
                     }
-                }
-                if (shouldSwitch) {
-                    /* If a switch has been marked, make the switch
-                    and mark that a switch has been done: */
-                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-                    switching = true;
-                    // Each time a switch is done, increase this count by 1:
-                    switchcount++;
-                } else {
-                    /* If no switching has been done AND the direction is "asc",
-                    set the direction to "desc" and run the while loop again. */
-                    if (switchcount == 0 && dir == "asc") {
-                        dir = "desc";
-                        switching = true;
+                } else if (dir == "desc") {
+                    if (Number(x.innerHTML.replace(/\./g,'')) < Number(y.innerHTML.replace(/\./g,''))) {
+                        // If so, mark as a switch and break the loop:
+                        shouldSwitch = true;
+                        break;
                     }
                 }
             }
+            if (shouldSwitch) {
+                /* If a switch has been marked, make the switch
+                and mark that a switch has been done: */
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
+                // Each time a switch is done, increase this count by 1:
+                switchcount++;
+            } else {
+                /* If no switching has been done AND the direction is "asc",
+                set the direction to "desc" and run the while loop again. */
+                if (switchcount == 0 && dir == "asc") {
+                    dir = "desc";
+                    switching = true;
+                }
+            }
         }
-    });
+    }
